@@ -16,11 +16,8 @@ class NoteAdapter(private val activity: Activity): RecyclerView.Adapter<NoteAdap
 
     var listNotes = ArrayList<Note>()
         set(listNotes) {
-            if (listNotes.size > 0) {
-                this.listNotes.clear()
-            }
+            this.listNotes.clear()
             this.listNotes.addAll(listNotes)
-
             notifyDataSetChanged()
         }
 
@@ -51,7 +48,7 @@ class NoteAdapter(private val activity: Activity): RecyclerView.Adapter<NoteAdap
                     val intent = Intent(activity, NoteAddUpdateActivity::class.java)
                     intent.putExtra(NoteAddUpdateActivity.EXTRA_POSITION, position)
                     intent.putExtra(NoteAddUpdateActivity.EXTRA_NOTE, note)
-                    activity.startActivityForResult(intent, NoteAddUpdateActivity.REQUEST_UPDATE)
+                    activity.startActivity(intent)
                 }
             }))
         }

@@ -2,18 +2,20 @@ package com.fauzimaulana.mynotesapp
 
 import android.content.ContentValues
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.fauzimaulana.mynotesapp.databinding.ActivityNoteAddUpdateBinding
 import com.fauzimaulana.mynotesapp.db.DatabaseContract
+import com.fauzimaulana.mynotesapp.db.DatabaseContract.NoteColumns.Companion.CONTENT_URI
 import com.fauzimaulana.mynotesapp.db.DatabaseContract.NoteColumns.Companion.DATE
-import com.fauzimaulana.mynotesapp.db.NoteHelper
 import com.fauzimaulana.mynotesapp.entity.Note
+import com.fauzimaulana.mynotesapp.helper.MappingHelper
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,7 +23,7 @@ class NoteAddUpdateActivity : AppCompatActivity(), View.OnClickListener {
 
 
     private lateinit var binding: ActivityNoteAddUpdateBinding
-    private lateinit var noteHelper: NoteHelper
+    private lateinit var uriWithId: Uri
 
     private var isEdit = false
     private var note: Note? = null
@@ -30,11 +32,6 @@ class NoteAddUpdateActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         const val EXTRA_NOTE = "extra_note"
         const val EXTRA_POSITION = "extra_position"
-        const val REQUEST_ADD = 100
-        const val RESULT_ADD = 101
-        const val REQUEST_UPDATE = 200
-        const val RESULT_UPDATE = 201
-        const val RESULT_DELETE = 301
         const val ALERT_DIALOG_CLOSE = 10
         const val ALERT_DIALOG_DELETE = 20
     }
@@ -51,10 +48,6 @@ class NoteAddUpdateActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityNoteAddUpdateBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        noteHelper = NoteHelper.getInstance(applicationContext)
-
-        noteHelper.open()
-
         note = intent.getParcelableExtra(EXTRA_NOTE)
         if (note != null) {
             position = intent.getIntExtra(EXTRA_POSITION, 0)
@@ -67,6 +60,17 @@ class NoteAddUpdateActivity : AppCompatActivity(), View.OnClickListener {
         val btnTitle: String
 
         if (isEdit) {
+            //uri that we got here will be used for getting data from provider
+            //content://com.fauzimaulana.mynotesapp/note/id
+
+            uriWithId = Uri.parse(CONTENT_URI.toString() + "/" + note?.id)
+
+            val cursor = contentResolver.query(uriWithId, null, null, null, null)
+            if (cursor !=  null) {
+                note = MappingHelper.mapCursorToObject(cursor)
+                cursor.close()
+            }
+
             actionBarTitle = "Edit"
             btnTitle = "Update"
 
@@ -109,25 +113,16 @@ class NoteAddUpdateActivity : AppCompatActivity(), View.OnClickListener {
             values.put(DatabaseContract.NoteColumns.DESCRIPTION, desc)
 
             if (isEdit) {
-                val result = noteHelper.update(note?.id.toString(), values).toLong()
-                if (result > 0) {
-                    setResult(RESULT_UPDATE, intent)
-                    finish()
-                } else {
-                    Toast.makeText(this@NoteAddUpdateActivity, "Failed to update the data", Toast.LENGTH_SHORT).show()
-                }
+                //content://com.fauzimaulana.mynotesapp/note/id
+                contentResolver.update(uriWithId, values, null, null)
+                Toast.makeText(this, "One Item Edited", Toast.LENGTH_SHORT).show()
+                finish()
             } else {
-                note?.date = getCurrentDate()
                 values.put(DATE, getCurrentDate())
-                val result = noteHelper.insert(values)
-
-                if (result > 0) {
-                    note?.id = result.toInt()
-                    setResult(RESULT_ADD, intent)
-                    finish()
-                } else {
-                    Toast.makeText(this@NoteAddUpdateActivity, "Failed to add the data", Toast.LENGTH_SHORT).show()
-                }
+                //content://com.fauzimaulana.mynotesapp/note
+                contentResolver.insert(CONTENT_URI, values)
+                Toast.makeText(this, "One Item Saved", Toast.LENGTH_SHORT).show()
+                finish()
             }
         }
     }
@@ -174,15 +169,10 @@ class NoteAddUpdateActivity : AppCompatActivity(), View.OnClickListener {
                 if (isDialogClose) {
                     finish()
                 } else {
-                    val result = noteHelper.deleteById(note?.id.toString()).toLong()
-                    if (result > 0) {
-                        val intent = Intent()
-                        intent.putExtra(EXTRA_POSITION, position)
-                        setResult(RESULT_DELETE, intent)
-                        finish()
-                    } else {
-                        Toast.makeText(this@NoteAddUpdateActivity, "Failed to delete the data", Toast.LENGTH_SHORT).show()
-                    }
+                    //content://com.fauzimaulana.mynotesapp/note/id
+                    contentResolver.delete(uriWithId, null, null)
+                    Toast.makeText(this, "One Item Deleted", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
             }
             .setNegativeButton("No") { dialog, _ -> dialog.cancel() }

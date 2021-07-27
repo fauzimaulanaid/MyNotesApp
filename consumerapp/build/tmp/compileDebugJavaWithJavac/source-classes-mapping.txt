@@ -1,0 +1,8 @@
+com/fauzimaulana/consumerapp/databinding/ItemNoteBinding.java
+ com.fauzimaulana.consumerapp.databinding.ItemNoteBinding
+com/fauzimaulana/consumerapp/databinding/ActivityMainBinding.java
+ com.fauzimaulana.consumerapp.databinding.ActivityMainBinding
+com/fauzimaulana/consumerapp/databinding/ActivityNoteAddUpdateBinding.java
+ com.fauzimaulana.consumerapp.databinding.ActivityNoteAddUpdateBinding
+com/fauzimaulana/consumerapp/BuildConfig.java
+ com.fauzimaulana.consumerapp.BuildConfig

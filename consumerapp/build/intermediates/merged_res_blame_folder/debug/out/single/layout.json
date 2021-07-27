@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "E:\\DICODING\\AndroidStudioProjects\\MyNotesApp\\consumerapp\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\activity_note_add_update.xml",
+        "source": "E:\\DICODING\\AndroidStudioProjects\\MyNotesApp\\consumerapp\\src\\main\\res\\layout\\activity_note_add_update.xml"
+    },
+    {
+        "merged": "E:\\DICODING\\AndroidStudioProjects\\MyNotesApp\\consumerapp\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\item_note.xml",
+        "source": "E:\\DICODING\\AndroidStudioProjects\\MyNotesApp\\consumerapp\\src\\main\\res\\layout\\item_note.xml"
+    },
+    {
+        "merged": "E:\\DICODING\\AndroidStudioProjects\\MyNotesApp\\consumerapp\\build\\intermediates\\incremental\\mergeDebugResources\\stripped.dir\\layout\\activity_main.xml",
+        "source": "E:\\DICODING\\AndroidStudioProjects\\MyNotesApp\\consumerapp\\src\\main\\res\\layout\\activity_main.xml"
+    }
+]
